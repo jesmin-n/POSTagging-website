@@ -1,0 +1,73 @@
+<link rel="stylesheet" type="text/css" href="style.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+
+<script src="logic.js"></script>
+<script type="text/javascript" src="jspos-0.2.2/lexer.js"></script>
+<script type="text/javascript" src="jspos-0.2.2/lexicon.js_"></script>
+<script type="text/javascript" src="jspos-0.2.2/POSTagger.js"></script>
+
+<!-- <form action="/action_page.php">
+  Username: <input type="text" name="usrname"><br>
+  <input type="submit" value="Submit">
+</form> -->
+
+<input type="text" id="input-text">
+<button id="actionButton">Process Text!</button>
+
+<h2>TAGGED TEXT</h2>
+<div id="tagged_text"></div>
+
+<h2>Nouns</h2>
+<div id="tagged_nouns"></div>
+
+<h2>Verbs</h2>
+<div id="tagged_verbs"></div>
+
+<h2>Adjectives</h2>
+<div id="tagged_adjectives"></div>
+
+<h2>Cardinal Numbers</h2>
+<div id="tagged_cardinalnums"></div>
+
+<script type="text/javascript">
+document.getElementById("actionButton").onclick = function(){
+  processText();
+}
+
+function processText() {
+  var words = new Lexer().lex(document.getElementById("input-text").value);
+  var taggedWords = new POSTagger().tag(words);
+  var result = "";
+
+  var nouns = "";
+  var verbs = ""
+  var adjectives = ""; //TODO: get the noun it describes from IBM Watson's initial grouping: [adjective, noun it describes]
+  var cardinalnums = ""; //TODO: get the noun it describes from IBM Watson's initial grouping: [number, noun it describes]
+
+  for (i in taggedWords) {
+    var taggedWord = taggedWords[i];
+    var word = taggedWord[0];
+    var tag = taggedWord[1];
+    // Note the use of document.writeln instead of print
+    if (tag == "NN" || tag == "NNP" || tag == "NNPS" || tag == "NNS") {
+      nouns += (word + ", ");
+    }
+    if (tag == "VB" || tag == "VBD" || tag == "VBG" || tag == "VBN" || tag == "VBP" || tag == "VBZ") {
+      verbs += (word + ", ");
+    }
+    if (tag == "JJ" || tag == "JJR" || tag == "JJS") {
+      adjectives += (word + ", ");
+    }
+    if (tag == "CD") {
+      cardinalnums += (word + ", ");
+    }
+    result += (word + " /" + tag + "<br/>");
+  }
+  document.getElementById("tagged_text").innerHTML = result;
+  document.getElementById("tagged_nouns").innerHTML = nouns;
+  document.getElementById("tagged_verbs").innerHTML = verbs;
+  document.getElementById("tagged_adjectives").innerHTML = adjectives;
+  document.getElementById("tagged_cardinalnums").innerHTML = cardinalnums;
+}
+
+</script>
